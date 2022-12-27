@@ -1,3 +1,4 @@
+// TODO(rihoj) add NLB for UDP traffic
 resource "aws_lb" "match" {
     name = "amongus-matchmaker"
     internal = false
