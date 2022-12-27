@@ -75,7 +75,7 @@
 
     - name: "Add current user account to 'docker' group"
       ansible.builtin.user:
-        name: "{{ ansible_user_id }}"
+        name: "{{ docker_service_account }}"
         groups: docker
         append: yes
 
