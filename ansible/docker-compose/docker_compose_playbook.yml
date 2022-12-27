@@ -1,0 +1,113 @@
+- become: true
+  hosts: all
+  name: Impostor-install
+  vars:
+    docker_gpg_url: "https://download.docker.com/linux/rhel/gpg"
+    docker_home: "/home/docker"
+    docker_compose_file: "Impostor_docker-compose.yml"
+    docker_service_account: ec2-user
+    docker_container_name: "impostor"
+  collections:
+    - community.docker
+  tasks:
+    
+    - name: "Install prerequisites to add Docker repo"
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      ansible.builtin.yum:
+        name:
+        - ca-certificates
+        - curl
+        - gnupg
+        - redhat-lsb-core
+        state: latest
+        update_cache: true
+    
+    - name: "Download Docker's GPG key"
+      ansible.builtin.rpm_key:
+        key: "{{ docker_gpg_url }}"
+        state: present
+        validate_certs: false
+
+    - name: "Install packages for Docker"
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      ansible.builtin.yum:
+        name:
+        - docker
+        - python3
+        - git
+        state: latest
+        update_cache: true
+
+    - name: "Verify the Docker service is running"
+      ansible.builtin.service:
+        name: docker
+        state: started
+
+    - name: "Create a directory for Docker"
+      ansible.builtin.file:
+        path: "{{ docker_home }}"
+        state: directory
+        mode: 0755
+
+    - name: "Install prerequisites for Ansible community.docker.docker_compose"
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      ansible.builtin.yum:
+        name:
+        - python3-requests
+        - python3-pip
+        state: latest
+        update_cache: false
+    
+    - name: "Download latest release of docker-compose from Docker's public Github repo"
+      ansible.builtin.get_url:
+        url: https://github.com/docker/compose/releases/latest/download/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 0755
+
+    - name: "Make sure docker-compose is executable and has correct permissions"
+      ansible.builtin.file:
+        path: /usr/local/bin/docker-compose
+        owner: "{{ docker_service_account }}"
+        group: "{{ docker_service_account }}"
+
+    - name: "Add current user account to 'docker' group"
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: yes
+
+    - name: "Install docker-compose for Python3"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      ansible.builtin.pip:
+        name: docker-compose
+        executable: pip3
+
+    - name: "Install Docker SDK for Python3"
+      vars:
+       ansible_python_interpreter: /usr/bin/python3
+      ansible.builtin.pip:
+        name: docker
+        executable: pip3
+    
+    - name: copy Docker Compose files
+      copy:
+        src: "{{ docker_compose_file }}"
+        dest: "{{ docker_home }}/docker-compose.yml"
+
+    - name: "Make sure no existing containers are running"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      community.docker.docker_compose:
+        project_src: "{{ docker_home }}"
+        state: absent
+
+    - name: "Spin up Docker container(s)"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      community.docker.docker_compose:
+        project_src: "{{ docker_home }}"
+        files: "{{ docker_home }}/docker-compose.yml"
