@@ -4,7 +4,7 @@ variable "private_key" {
 }
 
 variable "zone_id" {
-  type = string
+  type        = string
   description = "The Route53 zone"
 }
 
@@ -29,22 +29,22 @@ variable "gameserver_subnets" {
 }
 
 variable "instance_subnet" {
- type = object({
+  type = object({
     id                = string
     arn               = string
     vpc_id            = string
     availability_zone = string
   })
-  description = "Subnet object for the gameserver instance" 
+  description = "Subnet object for the gameserver instance"
 }
 
 variable "instance_type" {
-  type = string
-  default = "t3a.micro"
+  type        = string
+  default     = "t3a.micro"
   description = "The size of the server"
 }
 
 variable "instance_key_name" {
-  type = string
+  type        = string
   description = "The AWS Keyname for an instance"
 }
