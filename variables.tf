@@ -7,3 +7,13 @@ variable "zone_id" {
   type = string
   description = "The Route53 zone"
 }
+
+variable "gameserver_subnets" {
+  type = list(object({
+    id                = string
+    arn               = string
+    vpc_id            = string
+    availability_zone = string
+  }))
+  description = "List of subnet objects for the gameserver nlb"
+}

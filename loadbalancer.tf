@@ -1,4 +1,3 @@
-// TODO(rihoj) add NLB for UDP traffic
 resource "aws_lb" "match" {
     name = "amongus-matchmaker"
     internal = false
@@ -11,4 +10,12 @@ resource "aws_lb" "match" {
     #   bucket = aws_
     # }
 
+}
+
+resource "aws_lb" "game" {
+  name                       = "amongus-game"
+  internal                   = false
+  load_balancer_type         = "network"
+  subnets                    = var.gameserver_subnets
+  enable_deletion_protection = true
 }
