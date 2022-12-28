@@ -28,7 +28,7 @@ resource "aws_instance" "impostor" {
   key_name                             = "amonguseast1" // TODO(rihoj) make resource
   security_groups                      = ["launch-wizard-2"]
   monitoring                           = true
-  subnet_id                            = "subnet-fcd8b09b" // TODO(rihoj) make resource
+  subnet_id                            = var.instance_subnet // TODO(rihoj) make resource
 
   provisioner "remote-exec" {
     inline = ["echo Done!"]

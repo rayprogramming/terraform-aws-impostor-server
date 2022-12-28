@@ -27,3 +27,13 @@ variable "gameserver_subnets" {
   }))
   description = "List of subnet objects for the gameserver nlb"
 }
+
+variable "instance_subnet" {
+ type = object({
+    id                = string
+    arn               = string
+    vpc_id            = string
+    availability_zone = string
+  })
+  description = "Subnet object for the gameserver instance" 
+}
