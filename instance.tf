@@ -25,7 +25,7 @@ resource "aws_instance" "impostor" {
   availability_zone                    = var.instance_subnet.availability_zone
   ebs_optimized                        = true
   instance_initiated_shutdown_behavior = "stop"
-  key_name                             = "amonguseast1" // TODO(rihoj) make variable
+  key_name                             = var.instance_key_name
   security_groups                      = [aws_security_group.amongus_instance.id]
   monitoring                           = true
   subnet_id                            = var.instance_subnet // TODO(rihoj) make resource

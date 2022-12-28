@@ -43,3 +43,8 @@ variable "instance_type" {
   default = "t3a.micro"
   description = "The size of the server"
 }
+
+variable "instance_key_name" {
+  type = string
+  description = "The AWS Keyname for an instance"
+}
