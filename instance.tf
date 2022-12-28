@@ -20,7 +20,7 @@ data "aws_ami" "al2" {
 resource "aws_instance" "impostor" {
   ami                                  = data.aws_ami.al2.id
   instance_type                        = var.instance_type
-  iam_instance_profile                 = "among-us"   // TODO(rihoj) make resource
+  iam_instance_profile                 = aws_iam_instance_profile.instance_profile.name
   associate_public_ip_address          = false        // TODO(rihoj) use NLB to handle pub traffic
   availability_zone                    = "us-east-1d" // TODO(rihoj) Make resource
   ebs_optimized                        = true
