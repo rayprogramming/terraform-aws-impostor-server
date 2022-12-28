@@ -3,7 +3,7 @@ resource "aws_lb" "match" {
     internal = false
     load_balancer_type = "application"
     security_groups = ["amongus"] // TODO(rihoj) make resource
-    subnets = [] // TODO(rihoj) make resources
+    subnets = var.matchmaker_subnets
     enable_deletion_protection = true
 
     # access_logs { // TODO(rihoj) add access logs

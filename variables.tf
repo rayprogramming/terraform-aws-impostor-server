@@ -8,6 +8,16 @@ variable "zone_id" {
   description = "The Route53 zone"
 }
 
+variable "matchmaker_subnets" {
+  type = list(object({
+    id                = string
+    arn               = string
+    vpc_id            = string
+    availability_zone = string
+  }))
+  description = "List of subnet objects for the match maker alb"
+}
+
 variable "gameserver_subnets" {
   type = list(object({
     id                = string
