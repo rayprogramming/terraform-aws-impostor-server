@@ -19,14 +19,14 @@ data "aws_ami" "al2" {
 
 resource "aws_instance" "impostor" {
   ami                                  = data.aws_ami.al2.id
-  instance_type                        = "t3a.micro"  // TODO(rihoj) make var
+  instance_type                        = var.instance_type
   iam_instance_profile                 = "among-us"   // TODO(rihoj) make resource
   associate_public_ip_address          = false        // TODO(rihoj) use NLB to handle pub traffic
   availability_zone                    = "us-east-1d" // TODO(rihoj) Make resource
   ebs_optimized                        = true
   instance_initiated_shutdown_behavior = "stop"
-  key_name                             = "amonguseast1" // TODO(rihoj) make resource
-  security_groups                      = ["launch-wizard-2"]
+  key_name                             = "amonguseast1" // TODO(rihoj) make variable
+  security_groups                      = [aws_security_group.amongus_instance.id]
   monitoring                           = true
   subnet_id                            = var.instance_subnet // TODO(rihoj) make resource
 

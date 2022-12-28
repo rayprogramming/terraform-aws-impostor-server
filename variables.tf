@@ -37,3 +37,9 @@ variable "instance_subnet" {
   })
   description = "Subnet object for the gameserver instance" 
 }
+
+variable "instance_type" {
+  type = string
+  default = "t3a.micro"
+  description = "The size of the server"
+}
