@@ -47,6 +47,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_gameserver_subnets"></a> [gameserver\_subnets](#input\_gameserver\_subnets) | List of subnet objects for the gameserver nlb | <pre>list(object({<br>    id                = string<br>    arn               = string<br>    vpc_id            = string<br>    availability_zone = string<br>  }))</pre> | n/a | yes |
+| <a name="input_instance_key_name"></a> [instance\_key\_name](#input\_instance\_key\_name) | The AWS Keyname for an instance | `string` | n/a | yes |
 | <a name="input_instance_subnet"></a> [instance\_subnet](#input\_instance\_subnet) | Subnet object for the gameserver instance | <pre>object({<br>    id                = string<br>    arn               = string<br>    vpc_id            = string<br>    availability_zone = string<br>  })</pre> | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The size of the server | `string` | `"t3a.micro"` | no |
 | <a name="input_matchmaker_subnets"></a> [matchmaker\_subnets](#input\_matchmaker\_subnets) | List of subnet objects for the match maker alb | <pre>list(object({<br>    id                = string<br>    arn               = string<br>    vpc_id            = string<br>    availability_zone = string<br>  }))</pre> | n/a | yes |
