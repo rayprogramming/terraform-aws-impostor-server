@@ -28,7 +28,7 @@ resource "aws_instance" "impostor" {
   key_name                             = var.instance_key_name
   security_groups                      = [aws_security_group.amongus_instance.id]
   monitoring                           = true
-  subnet_id                            = var.instance_subnet // TODO(rihoj) make resource
+  subnet_id                            = var.instance_subnet
 
   provisioner "remote-exec" {
     inline = ["echo Done!"]
