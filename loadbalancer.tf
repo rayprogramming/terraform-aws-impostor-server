@@ -2,7 +2,7 @@ resource "aws_lb" "match" {
   name                       = "amongus-matchmaker"
   internal                   = false
   load_balancer_type         = "application"
-  security_groups            = ["amongus"] // TODO(rihoj) make resource
+  security_groups            = [aws_security_group.amongus_lb.id]
   subnets                    = var.matchmaker_subnets
   enable_deletion_protection = true
 
