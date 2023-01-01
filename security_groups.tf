@@ -6,16 +6,16 @@ resource "aws_security_group" "amongus_instance" {
 
 resource "aws_security_group_rule" "amongus_instance_http" {
   type              = "ingress"
-  from_port         = 22023
-  to_port           = 22023
+  from_port         = 22022
+  to_port           = 22022
   protocol          = "tcp"
   security_group_id = aws_security_group.amongus_instance.id
 }
 
 resource "aws_security_group_rule" "amongus_instance_udp" {
   type              = "ingress"
-  from_port         = 22022
-  to_port           = 22022
+  from_port         = 22023
+  to_port           = 22023
   protocol          = "udp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.amongus_instance.id
