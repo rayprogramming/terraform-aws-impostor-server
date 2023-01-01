@@ -8,34 +8,29 @@ variable "zone_id" {
   description = "The Route53 zone"
 }
 
+variable "vpc_id" {
+  type        = string
+  description = "The id of the VPC"
+}
+
 variable "matchmaker_subnets" {
-  type = list(object({
-    id                = string
-    arn               = string
-    vpc_id            = string
-    availability_zone = string
-  }))
-  description = "List of subnet objects for the match maker alb"
+  type        = list(string)
+  description = "List of subnet IDs for the match maker alb"
 }
 
 variable "gameserver_subnets" {
-  type = list(object({
-    id                = string
-    arn               = string
-    vpc_id            = string
-    availability_zone = string
-  }))
-  description = "List of subnet objects for the gameserver nlb"
+  type        = list(string)
+  description = "List of subnet IDs for the gameserver nlb"
 }
 
 variable "instance_subnet" {
-  type = object({
-    id                = string
-    arn               = string
-    vpc_id            = string
-    availability_zone = string
-  })
-  description = "Subnet object for the gameserver instance"
+  type        = string
+  description = "Subnet ID for the gameserver instance"
+}
+
+variable "instance_availability_zone" {
+  type        = string
+  description = "Availability Zone for the gameserver instance"
 }
 
 variable "instance_type" {

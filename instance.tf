@@ -22,7 +22,7 @@ resource "aws_instance" "impostor" {
   instance_type                        = var.instance_type
   iam_instance_profile                 = aws_iam_instance_profile.instance_profile.name
   associate_public_ip_address          = false
-  availability_zone                    = var.instance_subnet.availability_zone
+  availability_zone                    = var.instance_availability_zone
   ebs_optimized                        = true
   instance_initiated_shutdown_behavior = "stop"
   key_name                             = var.instance_key_name
@@ -34,7 +34,7 @@ resource "aws_instance" "impostor" {
     inline = ["echo Done!"]
 
     connection {
-      host        = self.ipv4_address
+      host        = self.private_dns
       type        = "ssh"
       user        = "root"
       private_key = file(var.private_key)
@@ -42,7 +42,7 @@ resource "aws_instance" "impostor" {
   }
 
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ec2-user -i '${self.ipv4_address},' --private-key ${var.private_key} -e 'domain=${var.domain}' ${path.module}/ansible/playbook.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ec2-user -i '${self.private_dns},' --private-key ${var.private_key} -e 'matchmaker_domain=${aws_route53_record.matchmaker.fqdn}' -e 'game_domain=${aws_route53_record.gameserver.fqdn}' ${path.module}/ansible/playbook.yml"
   }
 
   root_block_device {
@@ -56,7 +56,11 @@ resource "aws_instance" "impostor" {
 
   ebs_block_device {
     delete_on_termination = false
-
+    device_name           = "records"
+    volume_size           = "10"
+    volume_type           = "gp3"
+    iops                  = 3000
+    throughput            = 125
   }
   tags = {
     Name = "amongus"

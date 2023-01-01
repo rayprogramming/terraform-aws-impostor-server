@@ -2,7 +2,7 @@ resource "aws_lb_target_group" "http" {
   name     = "amongus-http-targetgroup"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = var.instance_subnet.vpc_id
+  vpc_id   = var.vpc_id
 }
 
 resource "aws_lb_target_group_attachment" "http" {
@@ -14,7 +14,7 @@ resource "aws_lb_target_group" "udp" {
   name     = "amongus-udp-targetgroup"
   port     = 22022
   protocol = "HTTP"
-  vpc_id   = var.instance_subnet.vpc_id
+  vpc_id   = var.vpc_id
 }
 
 resource "aws_lb_target_group_attachment" "udp" {

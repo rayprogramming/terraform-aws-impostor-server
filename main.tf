@@ -6,12 +6,3 @@ terraform {
     }
   }
 }
-
-provider "aws" {
-  default_tags {
-    tags = {
-      Project   = "Impostor"
-      ManagedBy = "Terraform"
-    }
-  }
-}
