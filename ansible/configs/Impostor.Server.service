@@ -1,0 +1,16 @@
+# /etc/systemd/system/Impostor.Server.service
+[Unit]
+Description=Impostor.Server
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=2
+User={{ impostor_user }}
+WorkingDirectory={{ impostor_path }}
+ExecStart={{ impostor_path }}/Impostor.Server
+
+[Install]
+WantedBy=multi-user.target

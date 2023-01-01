@@ -1,0 +1,8 @@
+{
+    "HttpServer": {
+      "ListenIp": "{{ ansible_host }}",
+      "ListenPort": "{{ http_port }}",
+      "UseHttps": false,
+      "CertificatePath": ""
+    }
+  }

@@ -1,0 +1,24 @@
+{
+    "Server": {
+      "PublicIp": "{{ public_ip.content }}",
+      "PublicPort": "{{ public_port }}",
+      "ListenIp": "{{ ansible_host }}",
+      "ListenPort": "{{ private_port }}"
+    },
+    "AntiCheat": {
+      "Enabled": true,
+      "BanIpFromGame": true
+    },
+    "Compatibility": {
+      "AllowFutureGameVersions": true,
+      "AllowVersionMixing": true
+    },
+    "Debug": {
+      "GameRecorderEnabled": true,
+      "GameRecorderPath": "{{ impostor_path }}/records/"
+    },
+    "PluginLoader": {
+      "Paths": ["{{ impostor_plugins }}"],
+      "LibraryPaths": ["{{ net7corepath.files[0].path }}"]
+    }
+  }

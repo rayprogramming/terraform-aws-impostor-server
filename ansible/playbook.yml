@@ -1,0 +1,163 @@
+- become: true
+  hosts: all
+  name: Impostor-install
+  gather_facts: true
+  vars:
+    impostor_nightly_zip_path: "/home/ec2-user/Impostor-Server-latest.zip"
+    impostor_path: "/home/ec2-user/Impostor"
+    impostor_plugins: "/home/ec2-user/Impostor/Plugins"
+    impostor_user: "ec2-user"
+    public_port: "443"
+    private_port: "22023"
+    http_port: "22022"
+    
+  tasks:
+
+  - name: "Impostor on RHEL-based systems"
+    when: ansible_os_family == "RedHat"
+    block:
+
+      - name: "Make sure system is up-to-date"
+        vars:
+          ansible_python_interpreter: /usr/bin/python
+        ansible.builtin.yum:
+          name: '*'
+          state: latest
+          update_cache: true
+
+      - name: Get our external IP address to set in config.json
+        ansible.builtin.uri:
+          url: "http://ifconfig.me/ip"
+          method: GET
+          return_content: yes
+          status_code: 200
+          body_format: raw
+        register: public_ip
+
+      - name: "Install rpm for .NET 7"
+        vars:
+          ansible_python_interpreter: /usr/bin/python
+        ansible.builtin.yum:
+          name: https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+          state: present
+          update_cache: true
+
+      - name: "Install all prerequisites"
+        vars:
+          ansible_python_interpreter: /usr/bin/python
+        ansible.builtin.yum:
+          name: 
+            - aspnetcore-runtime-7.0 # for base Impostor.Server
+            - aspnetcore-runtime-6.0 # for Impostor.Http
+            - python3
+            - python3-pip
+            - python3-requests
+          state: latest
+          update_cache: true
+
+      - name: "Install Python3 package for web scraping"
+        vars:
+          ansible_python_interpreter: /usr/bin/python3
+        ansible.builtin.pip:
+          name: beautifulsoup4 # this package allows us to parse HTML from nightly.link
+          executable: pip3
+
+      - name: "Locate local path to .NET CORE 7"
+        ansible.builtin.find:
+          paths: "/usr/share/dotnet/shared/Microsoft.AspNetCore.App"
+          recurse: no
+          file_type: directory
+          use_regex: yes
+          patterns: "^7"
+        register: net7corepath
+
+      - name: "Copy and Run Python3 script to scrape nightly.link for nightly CI build URL"
+        ansible.builtin.script: scripts/get-nightly.py
+        args:
+          executable: python3
+        register: nightly_url
+
+      - name: "Create a new directory for Impostor"
+        ansible.builtin.file:
+          path: "{{ impostor_path }}"
+          owner: "{{ impostor_user }}"
+          group: "{{ impostor_user }}"
+          state: directory
+          mode: 0755
+
+      - name: "Download nightly Impostor release as zip"
+        ansible.builtin.get_url:
+          url: "{{ nightly_url.stdout }}"
+          dest: "{{ impostor_nightly_zip_path }}"
+          mode: 0755
+        
+      - name: "Unpack zip"
+        ansible.builtin.unarchive:
+          remote_src: true
+          src: "{{ impostor_nightly_zip_path }}"
+          dest: "{{ impostor_path }}"
+          owner: "{{ impostor_user }}"
+          group: "{{ impostor_user }}"
+
+      - name: "Copy Impostor.Server config to remote"
+        ansible.builtin.template:
+          src: configs/config.json
+          dest: "{{ impostor_path }}/config.json"
+          owner: "{{ impostor_user }}"
+          group: "{{ impostor_user }}"
+          mode: 0644
+
+      - name: "Copy Impostor.Http config to remote"
+        ansible.builtin.template:
+          src: configs/config_http.json
+          dest: "{{ impostor_path }}/config_http.json"
+          owner: "{{ impostor_user }}"
+          group: "{{ impostor_user }}"
+          mode: 0644
+
+      - name: "Make Impostor.Server executable"
+        ansible.builtin.file:
+          path: "{{ impostor_path }}/Impostor.Server"
+          mode: 0755
+
+      - name: "Create plugins folder, if it doesn't exist"
+        ansible.builtin.file:
+          dest: "{{ impostor_plugins }}"
+          state: directory
+          owner: "{{ impostor_user }}"
+          group: "{{ impostor_user }}"
+          mode: 0755
+
+      - name: "Create records folder, if it doesn't exist"
+        ansible.builtin.file:
+          dest: "{{ impostor_path }}/records"
+          state: directory
+          owner: "{{ impostor_user }}"
+          group: "{{ impostor_user }}"
+          mode: 0755
+
+      - name: "Find latest Impostor.Http plugin release on Github"
+        ansible.builtin.uri:
+          url: https://api.github.com/repos/Impostor/Impostor.Http/releases/latest
+          return_content: true
+        register: impostor_http_url
+      
+      - name: "Download latest Impostor.Http.dll"
+        ansible.builtin.get_url:
+          url: "https://github.com/Impostor/Impostor.Http/releases/download/{{ impostor_http_url.json.tag_name }}/Impostor.Http.dll"
+          dest: "{{ impostor_plugins }}/Impostor.Http.dll"
+          owner: "{{ impostor_user }}"
+          group: "{{ impostor_user }}"
+          mode: 0755
+
+      - name: "Register Impostor.Server as a service"
+        ansible.builtin.template:
+          src: configs/Impostor.Server.service
+          dest: /etc/systemd/system/Impostor.Server.service
+          mode: 0755
+          
+      - name: "Enable and start Impostor.Server"
+        ansible.builtin.systemd:
+          name: Impostor.Server.service
+          state: started
+          enabled: true
