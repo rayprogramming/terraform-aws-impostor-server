@@ -42,7 +42,7 @@ resource "aws_instance" "impostor" {
   }
 
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ec2-user -i '${self.private_dns},' --private-key ${var.private_key} -e 'matchmaker_domain=${aws_route53_record.matchmaker.fqdn}' -e 'game_domain=${aws_route53_record.gameserver.fqdn}' ${path.module}/ansible/playbook.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ec2-user -i '${self.private_dns},' --private-key ${var.private_key} -e 'matchmaker_domain=${local.matchmaker_fqdn}' -e 'game_domain=${local.gameserver_fqdn}' ${path.module}/ansible/playbook.yml"
   }
 
   root_block_device {

@@ -1,23 +1,25 @@
-resource "aws_route53_record" "matchmaker" {
-  zone_id = var.zone_id
-  name    = "among"
-  type    = "A"
+module "records" {
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 2.0"
 
-  alias {
-    name                   = aws_lb.match.dns_name
-    zone_id                = aws_lb.match.zone_id
-    evaluate_target_health = true
-  }
-}
+  zone_name = data.aws_route53_zone.zone.name
 
-resource "aws_route53_record" "gameserver" {
-  zone_id = var.zone_id
-  name    = "amongus"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.game.dns_name
-    zone_id                = aws_lb.game.zone_id
-    evaluate_target_health = true
-  }
+  records = [
+    {
+      name    = local.matchmaker_record
+      type    = "A"
+      alias   = {
+        name    = aws_lb.match.dns_name
+        zone_id = aws_lb.match.zone_id
+      }
+    },
+    {
+      name    = local.gameserver_record
+      type    = "A"
+      alais = {
+        name    = aws_lb.game.dns_name
+        zone_id = aws_lb.game.zone_id
+    }
+    },
+  ]
 }
