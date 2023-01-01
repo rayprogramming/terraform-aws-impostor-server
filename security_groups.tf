@@ -10,6 +10,7 @@ resource "aws_security_group_rule" "amongus_instance_http" {
   to_port           = 22022
   protocol          = "tcp"
   security_group_id = aws_security_group.amongus_instance.id
+  source_security_group_id = aws_security_group.amongus_lb.id
 }
 
 resource "aws_security_group_rule" "amongus_instance_udp" {
