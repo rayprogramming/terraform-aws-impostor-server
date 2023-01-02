@@ -34,15 +34,15 @@ resource "aws_instance" "impostor" {
     inline = ["echo Done!"]
 
     connection {
-      host        = self.private_dns
+      host        = self.private_ip
       type        = "ssh"
-      user        = "root"
+      user        = "ec2-user"
       private_key = file(var.private_key)
     }
   }
 
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ec2-user -i '${self.private_dns},' --private-key ${var.private_key} -e 'matchmaker_domain=${local.matchmaker_fqdn}' -e 'game_domain=${local.gameserver_fqdn}' ${path.module}/ansible/playbook.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ec2-user -i '${self.private_ip},' --private-key ${var.private_key} -e 'matchmaker_domain=${local.matchmaker_fqdn}' -e 'game_domain=${local.gameserver_fqdn}' ${path.module}/ansible/playbook.yml"
   }
 
   root_block_device {
@@ -56,7 +56,7 @@ resource "aws_instance" "impostor" {
 
   ebs_block_device {
     delete_on_termination = false
-    device_name           = "records"
+    device_name           = "/dev/sdb"
     volume_size           = "10"
     volume_type           = "gp3"
     iops                  = 3000
