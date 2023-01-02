@@ -16,7 +16,7 @@ module "records" {
     {
       name    = local.gameserver_record
       type    = "A"
-      alais = {
+      alias = {
         name    = aws_lb.game.dns_name
         zone_id = aws_lb.game.zone_id
     }
