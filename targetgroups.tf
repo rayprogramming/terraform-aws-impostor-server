@@ -13,7 +13,7 @@ resource "aws_lb_target_group_attachment" "http" {
 resource "aws_lb_target_group" "udp" {
   name     = "amongus-udp-targetgroup"
   port     = 22023
-  protocol = "HTTP"
+  protocol = "UDP"
   vpc_id   = var.vpc_id
 }
 
