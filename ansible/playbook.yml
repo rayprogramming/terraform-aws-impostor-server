@@ -26,15 +26,6 @@
           state: latest
           update_cache: true
 
-      - name: Get our external IP address to set in config.json
-        ansible.builtin.uri:
-          url: "http://ifconfig.me/ip"
-          method: GET
-          return_content: yes
-          status_code: 200
-          body_format: raw
-        register: public_ip
-
       - name: "Install rpm for .NET 7"
         vars:
           ansible_python_interpreter: /usr/bin/python
