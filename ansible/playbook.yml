@@ -7,6 +7,7 @@
     impostor_path: "/home/ec2-user/Impostor"
     impostor_plugins: "/home/ec2-user/Impostor/Plugins"
     impostor_user: "ec2-user"
+    listen_ip: "0.0.0.0" # there shouldn't be any need to change this, but this is the private IP address of the server
     public_port: "443"
     private_port: "22023"
     http_port: "22022"
