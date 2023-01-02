@@ -13,6 +13,16 @@ resource "aws_security_group_rule" "amongus_instance_http" {
   source_security_group_id = aws_security_group.amongus_lb.id
 }
 
+
+resource "aws_security_group_rule" "amongus_instance_ssh" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  security_group_id = aws_security_group.amongus_instance.id
+  cidr_blocks = [ "10.0.0.0/8" ]
+}
+
 resource "aws_security_group_rule" "amongus_instance_udp" {
   type              = "ingress"
   from_port         = 22023
