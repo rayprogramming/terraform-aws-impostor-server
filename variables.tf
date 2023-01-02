@@ -45,10 +45,10 @@ variable "instance_key_name" {
 }
 
 locals {
-  matchmaker_record = "among"
+  matchmaker_record = "au-matchmaker"
   matchmaker_domain = data.aws_route53_zone.zone.name
   matchmaker_fqdn = "${local.matchmaker_record}.${local.matchmaker_domain}"
-  gameserver_record = "amongus"
+  gameserver_record = "au-gameserver"
   gameserver_domain = data.aws_route53_zone.zone.name
   gameserver_fqdn = "${local.gameserver_record}.${local.gameserver_domain}"
 }
