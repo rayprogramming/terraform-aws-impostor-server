@@ -2,7 +2,7 @@
     "Server": {
       "PublicIp": "{{ public_ip.content }}",
       "PublicPort": "{{ public_port }}",
-      "ListenIp": "0.0.0.0",
+      "ListenIp": "{{ listen_ip }}",
       "ListenPort": "{{ private_port }}"
     },
     "AntiCheat": {
